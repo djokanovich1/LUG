@@ -1,0 +1,58 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BLL
+{
+   public class Persona
+    {
+        DAL.Persona mapperPersona = new DAL.Persona();
+        public List<BE.Persona> ListarTodos()
+        {
+            return mapperPersona.ListarTodos();
+        }
+
+        public bool Alta(BE.Persona persona)
+        {
+            int r = mapperPersona.Alta(persona);
+
+            if (r == 0||r==-1)
+            {
+                return false;
+
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public bool Baja(BE.Persona persona)
+        {
+            int r = mapperPersona.Baja(persona);
+            if (r==0||r==-1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public bool Modificar(BE.Persona persona)
+        {
+            int r = mapperPersona.Modificar(persona);
+            if (r == 0 || r == -1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+    }
+}
