@@ -1,0 +1,63 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace DAL
+{
+    class Acceso
+    {
+        SqlConnection conexion = new SqlConnection(@"Data Source=DANISAJOKAN7D0F\SQLEXPRESS; Initial Catalog=PARCIALCARDACCI; Integrated Security=SSPI;");
+        SqlTransaction tx;
+
+
+        public DataTable Leer(string consulta, SqlParameter[] parametros)
+        {
+            conexion.Open();
+            SqlDataAdapter adaptador = new SqlDataAdapter();
+            DataTable tabla = new DataTable();
+            adaptador.SelectCommand = new SqlCommand(consulta, conexion);
+            if (parametros != null)
+                adaptador.SelectCommand.Parameters.AddRange(parametros);
+            adaptador.SelectCommand.CommandType = CommandType.StoredProcedure;
+            adaptador.Fill(tabla);
+            adaptador = null;
+            conexion.Close();
+            return tabla;
+        }
+
+
+        public int Escribir(String consulta, SqlParameter[] parametros)
+        {
+            conexion.Open();
+            tx = conexion.BeginTransaction();
+            SqlCommand cmd = new SqlCommand(consulta, conexion);
+
+            int filas = 0;
+            try
+            {
+                if (parametros != null)
+                {
+                    cmd.Parameters.AddRange(parametros);
+                    cmd.Transaction = tx;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    filas = cmd.ExecuteNonQuery();
+                    cmd = null;
+                    tx.Commit();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                tx.Rollback();
+            }
+
+            conexion.Close();
+            return filas;
+        }
+    }
+}
+
